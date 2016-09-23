@@ -1,24 +1,24 @@
 package main
 
-import (
-    "fmt"
-    "sort"
+import ("fmt"
     "os"
+    "sort"
 )
 
 type logEntry struct {
     startTime uint64
-    endTime uint64
-    duration uint64
-    bitRate uint16
+    endTime   uint64
+    duration  uint64
+    bitRate   uint16
 }
 
 type query struct {
     startTime uint64
-    endTime uint64
+    endTime   uint64
 }
 
 type LogEntries []logEntry
+
 var sortByEndtime bool
 
 func (slice LogEntries) Len() int {
@@ -26,7 +26,7 @@ func (slice LogEntries) Len() int {
 }
 func (slice LogEntries) Less(i, j int) bool {
     if sortByEndtime {
-        return slice[i].endTime < slice[j].endTime;
+        return slice[i].endTime < slice[j].endTime
     } else {
         return slice[i].startTime < slice[j].startTime
     }
@@ -35,11 +35,11 @@ func (slice LogEntries) Swap(i, j int) {
     slice[i], slice[j] = slice[j], slice[i]
 }
 
-func scanData(logEntries LogEntries, sliceOfQueries []query) (LogEntries, []query){
-    var nrOfLogEntries,nrOfQueries uint32
+func scanData(logEntries LogEntries, sliceOfQueries []query) (LogEntries, []query) {
+    var nrOfLogEntries, nrOfQueries uint32
 
     fmt.Scanf("%d", &nrOfLogEntries)
-    for i:=uint32(0); i<nrOfLogEntries; i++{
+    for i := uint32(0); i < nrOfLogEntries; i++ {
         tmp_entry := logEntry{}
         fmt.Scanf("%d %d %d", &tmp_entry.endTime, &tmp_entry.duration, &tmp_entry.bitRate)
         tmp_entry.startTime = tmp_entry.endTime - tmp_entry.duration
@@ -47,7 +47,7 @@ func scanData(logEntries LogEntries, sliceOfQueries []query) (LogEntries, []quer
     }
 
     fmt.Scanf("%d", &nrOfQueries)
-    for i:=uint32(0); i<nrOfQueries; i++{
+    for i := uint32(0); i < nrOfQueries; i++ {
         tmp_query := query{}
         fmt.Scanf("%d %d", &tmp_query.startTime, &tmp_query.endTime)
         sliceOfQueries = append(sliceOfQueries, tmp_query)
@@ -55,12 +55,12 @@ func scanData(logEntries LogEntries, sliceOfQueries []query) (LogEntries, []quer
     return logEntries, sliceOfQueries
 }
 
-func calc(query query, logEntries LogEntries) (float64) {
+func calc(query query, logEntries LogEntries) float64 {
     var intervalTime float64
     var startTime, stopTime uint64
 
-    for i:=0; i<len(logEntries); i++{
-        
+    for i := 0; i < len(logEntries); i++ {
+
         if logEntries[i].startTime >= query.startTime {
             startTime = logEntries[i].startTime
         } else {
@@ -73,15 +73,15 @@ func calc(query query, logEntries LogEntries) (float64) {
         }
 
         if startTime < stopTime {
-            intervalTime += float64(float64(logEntries[i].bitRate)/float64(1000) * float64(stopTime-startTime))
+            intervalTime += float64(float64(logEntries[i].bitRate) / float64(1000) * float64(stopTime-startTime))
         }
     }
     return intervalTime
 }
 
-func removeEarlierPart(logEntries LogEntries, queryStartTime uint64)(LogEntries) {
+func removeEarlierPart(logEntries LogEntries, queryStartTime uint64) LogEntries {
     low := 0
-    high := len(logEntries)-1
+    high := len(logEntries) - 1
     mid := 0
 
     if logEntries[low].endTime > queryStartTime {
@@ -91,16 +91,16 @@ func removeEarlierPart(logEntries LogEntries, queryStartTime uint64)(LogEntries)
         os.Exit(0)
     }
 
-    for high - low > 1{
+    for high-low > 1 {
         mid = low + (high-low)/2
 
         //fmt.Println(low,mid,high)
 
-        if high-low == 1 || high-low==2 {
-            if logEntries[mid].endTime <= queryStartTime && logEntries[mid+1].endTime > queryStartTime{
+        if high-low == 1 || high-low == 2 {
+            if logEntries[mid].endTime <= queryStartTime && logEntries[mid+1].endTime > queryStartTime {
                 return logEntries[mid+1:]
             }
-            if logEntries[mid+1].endTime <= queryStartTime && mid+2 < len(logEntries)-1 && logEntries[mid+2].endTime > queryStartTime{
+            if logEntries[mid+1].endTime <= queryStartTime && mid+2 < len(logEntries)-1 && logEntries[mid+2].endTime > queryStartTime {
 
                 return logEntries[mid+2:]
             }
@@ -111,15 +111,15 @@ func removeEarlierPart(logEntries LogEntries, queryStartTime uint64)(LogEntries)
         } else if queryStartTime > logEntries[mid].endTime {
             low = mid
         } else {
-            high = high-1
+            high = high - 1
         }
     }
     return logEntries
 }
 
-func removeLaterPart(logEntries LogEntries, queryEndTime uint64)(LogEntries) {
+func removeLaterPart(logEntries LogEntries, queryEndTime uint64) LogEntries {
     low := 0
-    high := len(logEntries)-1
+    high := len(logEntries) - 1
     mid := 0
 
     if logEntries[high].startTime < queryEndTime {
@@ -129,16 +129,16 @@ func removeLaterPart(logEntries LogEntries, queryEndTime uint64)(LogEntries) {
         os.Exit(0)
     }
 
-    for high - low > 1 {
+    for high-low > 1 {
         mid = low + (high-low)/2
 
         //fmt.Println(low,mid,high)
 
-        if high-low == 1 || high-low==2 {
+        if high-low == 1 || high-low == 2 {
             if logEntries[mid].startTime >= queryEndTime && logEntries[mid+1].startTime > queryEndTime {
-                return logEntries[0:mid-1]
+                return logEntries[0 : mid-1]
             }
-            if logEntries[mid + 1].startTime >= queryEndTime && mid+2 < len(logEntries)-1 && logEntries[mid+2].startTime > queryEndTime {
+            if logEntries[mid+1].startTime >= queryEndTime && mid+2 < len(logEntries)-1 && logEntries[mid+2].startTime > queryEndTime {
                 return logEntries[0:mid]
             }
         }
@@ -148,21 +148,18 @@ func removeLaterPart(logEntries LogEntries, queryEndTime uint64)(LogEntries) {
         } else if queryEndTime > logEntries[mid].startTime {
             low = mid
         } else {
-            high = high-1
+            high = high - 1
         }
     }
     return logEntries
 }
 
-func getValuesToBeCalculated(logEntriesEarlier LogEntries, logEntriesLater LogEntries) (LogEntries) {
+func getValuesToBeCalculated(logEntriesEarlier LogEntries, logEntriesLater LogEntries) LogEntries {
     valuesToBeCalculated := LogEntries{}
-    for _,earlierElement := range logEntriesEarlier {
-        for i:=0; i<len(logEntriesLater); i++ {
-            //fmt.Println("index is",i)
-            if earlierElement.startTime == logEntriesLater[i].startTime &&
-                    earlierElement.bitRate == logEntriesLater[i].bitRate &&
-                    earlierElement.duration == logEntriesLater[i].duration &&
-                    earlierElement.endTime == logEntriesLater[i].endTime {
+    for _, earlierElement := range logEntriesEarlier {
+        for i := 0; i < len(logEntriesLater); i++ {
+
+            if theyAreEqual(earlierElement, logEntriesLater[i]) {
                 valuesToBeCalculated = append(valuesToBeCalculated, earlierElement)
                 logEntriesLater = append(logEntriesLater[:i], logEntriesLater[i+1:]...)
                 //fmt.Println("breaking")
@@ -174,6 +171,16 @@ func getValuesToBeCalculated(logEntriesEarlier LogEntries, logEntriesLater LogEn
     //fmt.Println("this returns")
     //fmt.Println(valuesToBeCalculated)
     return valuesToBeCalculated
+}
+
+func theyAreEqual(first_entry logEntry, second_entry logEntry) bool {
+    if first_entry.startTime == second_entry.startTime &&
+        first_entry.bitRate == second_entry.bitRate &&
+        first_entry.duration == second_entry.duration &&
+        first_entry.endTime == second_entry.endTime {
+        return true
+    }
+    return false
 }
 
 func main() {
@@ -195,13 +202,12 @@ func main() {
     logEntriesEarlier := LogEntries{}
     valuesToBeCalculated := LogEntries{}
 
-
     //fmt.Println("logEntriesSortedByStart")
     //fmt.Println(logEntriesSortedByStart)
     //fmt.Println("logEntriesSortedByEnd")
     //fmt.Println(logEntriesSortedByEnd)
 
-    for _,element := range sliceOfQueries {
+    for _, element := range sliceOfQueries {
 
         logEntriesEarlier = removeLaterPart(logEntriesSortedByStart, element.endTime)
         //fmt.Println("logEntriesEarlier")
@@ -211,9 +217,11 @@ func main() {
         //fmt.Println("logEntriesLater")
         //fmt.Println(logEntriesLater)
 
+        fmt.Println("   ",logEntriesSortedByEnd)
         valuesToBeCalculated = getValuesToBeCalculated(logEntriesEarlier, logEntriesLater)
+        fmt.Println("   ",logEntriesSortedByEnd)
         //fmt.Println("valuesToBeCalculated")
         //fmt.Println(valuesToBeCalculated)
-        fmt.Printf("%.3f\n",calc(element, valuesToBeCalculated))
+        fmt.Printf("%.3f\n", calc(element, valuesToBeCalculated))
     }
 }

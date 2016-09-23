@@ -30,3 +30,24 @@ func TestCalc(t *testing.T) {
         t.Error("Expected 20, got", result)
     }
 }
+
+//func TestGetValuesToBeCalculated(t *testing.T) {
+//    query := query{startTime: 30, endTime: 50}
+//    logEntries := LogEntries{}
+//    logEntries2 := LogEntries{}
+//
+//    logEntries = append(logEntries, logEntry{1, 60, 59, 1})
+//    logEntries = append(logEntries, logEntry{1, 40, 39, 1})
+//    logEntries = append(logEntries, logEntry{40, 60, 20, 1})
+//
+//    logEntries = append(logEntries, logEntry{1, 20, 19, 1})
+//    logEntries = append(logEntries, logEntry{60, 70, 10, 1})
+//    logEntries = append(logEntries, logEntry{1, 30, 29, 1})
+//
+//    result := calc(query, logEntries)
+//    expcted_result := 0.08999999999999998
+//
+//    if result != expcted_result {
+//        t.Error("Expected 20, got", result)
+//    }
+//}

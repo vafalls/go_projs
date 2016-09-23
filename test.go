@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
     //"sort"
+    "sort"
 )
 
 type query struct {
@@ -33,8 +34,17 @@ func test(mystring *string){
 }
 
 func main() {
-    mystring := "this is my string"
-    fmt.Println(mystring)
-    test(&mystring)
-    fmt.Println(mystring)
+    list := [5]int{4,3,2,1,0}
+    asd := []int{}
+    fmt.Println(list)
+    asd = getSubList(list)
+    fmt.Println(asd)
+    sort.Ints(asd)
+    fmt.Println(asd)
+    fmt.Println(list)
+
+}
+func getSubList(list [5]int) []int{
+    fmt.Println(list)
+    return list[1:3]
 }
